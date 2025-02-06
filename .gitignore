@@ -1,0 +1,13 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar archivos de Vite
+frontend/dist/
+frontend/.vite/
+
+# Ignorar archivos de IDE
+.vscode/
+.idea/
