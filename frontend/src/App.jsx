@@ -1,10 +1,10 @@
-import ImageSelector from './components/ImageSelector'
+import Game from './components/ImageSelector'
 import './App.css'
 
 function App() {
   return (
     <>
-      <ImageSelector />
+      <Game />
     </>
   )
 }

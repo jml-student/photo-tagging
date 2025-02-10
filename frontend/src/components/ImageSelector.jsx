@@ -1,81 +1,65 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import '../App.css'
 
-const ImageSelector = () => {
-  const [targetBox, setTargetBox] = useState(null)
-  const [showDropdown, setShowDropdown] = useState(false)
+const Game = () => {
+  // Estado para el tiempo transcurrido
+  const [time, setTime] = useState(0)
+  // Estado para el mensaje de victoria
+  // Estado para controlar si el juego ha terminado
+  const [gameOver, setGameOver] = useState(false)
 
-  const handleImageClick = (e) => {
+  // Coordenadas del personaje (ajusta según tu imagen)
+  const characterPosition = { x: 300, y: 150 }
+  // Tolerancia para el clic (en píxeles)
+  const tolerance = 20
+
+  // Efecto para el temporizador
+  useEffect(() => {
+    let interval
+    if (!gameOver) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1)
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [gameOver])
+
+  // Función para manejar el clic en la imagen
+  const handleClick = (e) => {
+    if (gameOver) return // Si el juego ya terminó, no hacer nada
+
     const rect = e.target.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    setTargetBox({ x, y })
-    setShowDropdown(true)
-  }
+    const clickX = e.clientX - rect.left
+    const clickY = e.clientY - rect.top
 
-  const handleClickOutside = () => {
-    setTargetBox(null)
-    setShowDropdown(false)
-  }
-
-  const handleCharacterSelect = (e) => {
-    const selectedCharacter = e.target.value
-    console.log('Personaje seleccionado:', selectedCharacter)
-    setShowDropdown(false)
-    setTargetBox(null)
+    // Verificar si el clic está cerca del personaje
+    if (
+      Math.abs(clickX - characterPosition.x) < tolerance &&
+      Math.abs(clickY - characterPosition.y) < tolerance
+    ) {
+      setGameOver(true) // Detener el juego
+    }
   }
 
   return (
-    <div style={{ position: 'relative' }} onClick={handleClickOutside}>
-      <img
-        src='../public/wall.jpg'
-        alt='Find Waldo'
-        onClick={(e) => {
-          e.stopPropagation()
-          handleImageClick(e)
-        }}
-        style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
-      />
-
-      {targetBox && (
-        <div
-          style={{
-            position: 'absolute',
-            left: targetBox.x - 25,
-            top: targetBox.y - 25,
-            width: '50px',
-            height: '50px',
-            border: '2px solid red',
-            backgroundColor: 'rgba(255, 0, 0, 0.2)',
-          }}
-        ></div>
-      )}
-
-      {showDropdown && targetBox && (
-        <div
-          style={{
-            position: 'absolute',
-            left: targetBox.x + 20,
-            top: targetBox.y + 20,
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            padding: '10px',
-            zIndex: 1000,
-          }}
-        >
-          <select
-            onChange={handleCharacterSelect}
-            onClick={(e) => {
-              e.stopPropagation()
-            }}
-          >
-            <option value='Waldo'>Waldo</option>
-            <option value='Wizard'>Wizard</option>
-            <option value='Wilma'>Wilma</option>
-          </select>
+    <div>
+      <div className='header'>
+        <div className='clock'>{time} s</div>
+        <div className='images'>
+          <img src='guy.png' alt='Guy' />
+          <img src='cuervo.png' alt='Crown' />
+          <img src='dog.png' alt='Dog' />
         </div>
-      )}
+      </div>
+      <div>
+        <img
+          src='wall.jpg' // Reemplaza con tu imagen
+          alt='Imagen del juego'
+          onClick={handleClick}
+        />
+      </div>
     </div>
   )
 }
 
-export default ImageSelector
+export default Game
